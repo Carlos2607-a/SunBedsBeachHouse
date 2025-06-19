@@ -26,7 +26,8 @@ with st.form("registro_venta"):
             "Hamaca": numero,
             "Primera línea": "Sí" if primera_linea else "No",
             "Forma de pago": forma_pago,
-            "Precio": precio
+            "Precio": precio,
+            "Total" : precio x numero
         })
         st.success("Venta registrada correctamente")
 
