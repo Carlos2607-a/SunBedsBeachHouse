@@ -13,23 +13,26 @@ dia_especial = st.checkbox("¿Fin de Semana? (Precios: 40 / 35)")
 precio_primera = 40 if dia_especial else 35
 precio_segunda = 35 if dia_especial else 30
 
-# Formulario para agregar nueva venta
 with st.form("registro_venta"):
     numero = st.number_input("Número de hamaca", min_value=1, step=1)
     primera_linea = st.checkbox("¿Primera línea?")
+    cantidad = st.number_input("Cantidad vendida", min_value=1, step=1)
     forma_pago = st.selectbox("Forma de pago", ["Efectivo", "Tarjeta", "Cuenta habitación", "Invitación"])
     submit = st.form_submit_button("Registrar venta")
 
     if submit:
         precio = precio_primera if primera_linea else precio_segunda
+        total = precio * cantidad
         st.session_state.ventas.append({
             "Hamaca": numero,
             "Primera línea": "Sí" if primera_linea else "No",
             "Forma de pago": forma_pago,
             "Precio": precio,
-            "Total" : precio x numero
+            "Cantidad": cantidad,
+            "Total": total
         })
         st.success("Venta registrada correctamente")
+
 
 # Mostrar ventas registradas
 df = pd.DataFrame(st.session_state.ventas)
