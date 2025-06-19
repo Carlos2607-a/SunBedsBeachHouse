@@ -13,6 +13,7 @@ dia_especial = st.checkbox("¿Fin de Semana? (Precios: 40 / 35)")
 precio_primera = 40 if dia_especial else 35
 precio_segunda = 35 if dia_especial else 30
 
+# Formulario para agregar nueva venta
 with st.form("registro_venta"):
     numero = st.number_input("Número de hamaca", min_value=1, step=1)
     primera_linea = st.checkbox("¿Primera línea?")
@@ -33,25 +34,37 @@ with st.form("registro_venta"):
         })
         st.success("Venta registrada correctamente")
 
-
 # Mostrar ventas registradas
 df = pd.DataFrame(st.session_state.ventas)
+
 if not df.empty:
     st.subheader("Ventas registradas")
     st.dataframe(df)
 
-    # Totales segmentados
     st.subheader("Resumen del día")
-    total_primera = df[df["Primera línea"] == "Sí"]["Precio"].sum()
-    total_segunda = df[df["Primera línea"] == "No"]["Precio"].sum()
-    total_general = df["Precio"].sum()
+
+    # Cantidad y total por línea
+    cantidad_primera = df[df["Primera línea"] == "Sí"]["Cantidad"].sum()
+    cantidad_segunda = df[df["Primera línea"] == "No"]["Cantidad"].sum()
+
+    total_primera = df[df["Primera línea"] == "Sí"]["Total"].sum()
+    total_segunda = df[df["Primera línea"] == "No"]["Total"].sum()
+    total_general = df["Total"].sum()
+    cantidad_total = df["Cantidad"].sum()
+
+    st.write(f"Cantidad hamacas Primera Línea: {cantidad_primera}")
+    st.write(f"Cantidad hamacas Segunda Línea: {cantidad_segunda}")
     st.write(f"Total Primera Línea: €{total_primera}")
     st.write(f"Total Segunda Línea: €{total_segunda}")
-    st.write(f"Total General: €{total_general}")
+    st.write(f"Cantidad total de hamacas: {cantidad_total}")
+    st.write(f"Total general: €{total_general}")
 
     st.subheader("Totales por forma de pago")
-    pagos = df.groupby("Forma de pago")["Precio"].sum()
-    st.dataframe(pagos)
+    resumen_pago = df.groupby("Forma de pago").agg(
+        Cantidad=("Cantidad", "sum"),
+        Total_Euros=("Total", "sum")
+    ).reset_index()
+    st.dataframe(resumen_pago)
 
 else:
     st.info("Aún no se ha registrado ninguna venta.")
